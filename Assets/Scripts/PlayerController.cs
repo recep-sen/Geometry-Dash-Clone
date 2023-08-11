@@ -10,13 +10,16 @@ public class PlayerController : MonoBehaviour
     public float JumpMultiplier;
     public float GroundedCheckRayLenght;
     public LayerMask GroundLayerMask;
+    public float FlyingGravity;
     [Tooltip("This only affects visually")] public float RotationSpeed;
 
     [Header("References")]
     public Transform Model;
+    public Transform Model2;
 
     private Rigidbody2D rb;
     private bool isGrounded => Physics2D.Raycast(transform.position, Vector2.down, GroundedCheckRayLenght, GroundLayerMask).collider != null;
+    private bool isFlying = false;
 
     private void Start()
     {
@@ -27,10 +30,25 @@ public class PlayerController : MonoBehaviour
     {
         transform.Translate(Vector3.right * MoveSpeed * Time.deltaTime);
 
+        if (isFlying)
+        {
+            transform.rotation = Quaternion.Euler(0,0, rb.velocity.y);
+
+            if (Input.GetMouseButton(0))
+            {
+                rb.gravityScale = -FlyingGravity;
+            }
+            else
+            {
+                rb.gravityScale = FlyingGravity;
+            }
+            return;
+        }
+
         if(isGrounded)
         {
             Vector3 modelRotation = Model.rotation.eulerAngles;
-            modelRotation.z -= modelRotation.z % 90;
+            modelRotation.z -= modelRotation.z % 180;
             Model.rotation = Quaternion.Euler(modelRotation);
             if (Input.GetMouseButton(0))
             {
@@ -42,6 +60,24 @@ public class PlayerController : MonoBehaviour
         {
             Model.Rotate(Vector3.back * RotationSpeed * Time.deltaTime);
         }
+    }
+
+    public void SwitchToFlyingMode()
+    {
+        isFlying = true;
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.gravityScale = FlyingGravity;
+        Model2.gameObject.SetActive(true);
+        Model.gameObject.SetActive(false);
+    }
+
+    public void SwitchToRunningMode()
+    {
+        isFlying = false;
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        rb.gravityScale = 2f;
+        Model2.gameObject.SetActive(false);
+        Model.gameObject.SetActive(true);
     }
 
     private void OnDrawGizmos()
