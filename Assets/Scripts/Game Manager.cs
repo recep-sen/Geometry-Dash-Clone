@@ -33,6 +33,6 @@ public class GameManager : MonoBehaviour
 
     public void ToggleAudio()
     {
-        auidoSource.mute = !auidoSource.mute;
+        auidoSource.mute = !auidoSource.mute; // I could make a seperate audio manager but I dont have many functionality about it so I added it to game manager
     }
 }
