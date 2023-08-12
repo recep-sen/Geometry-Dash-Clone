@@ -10,7 +10,7 @@ public class Obstacle : MonoBehaviour
     {
         if (1 << collision.collider.gameObject.layer == playerLayerMask.value)
         {
-            Debug.Log("Öldün");
+            GameManager.Instance.ChangeScene(1);
         }
     }
 
@@ -18,7 +18,7 @@ public class Obstacle : MonoBehaviour
     {
         if (1 << collision.collider.gameObject.layer == playerLayerMask.value)
         {
-            Debug.Log("Öldün");
+            GameManager.Instance.ChangeScene(1);
         }
     }
 }
